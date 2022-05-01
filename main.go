@@ -87,7 +87,7 @@ func main() {
 		case constants.Accounts:
 			err = service.Accounts(&sessionUser)
 		default:
-			fmt.Println(constants.InvalidCommandMsg)
+			fmt.Println("ERROR: ", constants.InvalidCommandMsg)
 		}
 		if err != nil {
 			fmt.Println(fmt.Sprintf("ERROR: %s!", err))

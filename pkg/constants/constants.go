@@ -18,6 +18,7 @@ const AccountExistsMsg = "username already exists"
 const WrongCredentialsMsg = "wrong username or password"
 const NotLoggedInMsg = "please log in first"
 const PermissionErrorMsg = "you do not have the permissions"
+const InsufficientFundsMsg = "account has insufficient funds"
 
 // Success Messages
 const RegisterSuccess = "successfully registered!"

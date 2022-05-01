@@ -8,14 +8,12 @@ import (
 	"fmt"
 	"github.com/rapidloop/skv"
 	"os"
-	"strconv"
 	"strings"
 
 	"errors"
 )
 
 func Register(wallet *Wallet, args []string) error {
-	fmt.Println("Registering...")
 	if len(args) != 2 {
 		return custError.InvalidNumArguments
 	}
@@ -33,11 +31,11 @@ func Register(wallet *Wallet, args []string) error {
 	// Login wallet
 	wallet.Username = username
 
+	fmt.Println(fmt.Sprintf("Successfully registered %s", username))
 	return nil
 }
 
 func Login(wallet *Wallet, args []string) error {
-	fmt.Println("Logging in...")
 	if len(args) != 2 {
 		return custError.InvalidNumArguments
 	}
@@ -59,61 +57,68 @@ func Login(wallet *Wallet, args []string) error {
 	// Login usr
 	wallet.Username = username
 
+	fmt.Println(fmt.Sprintf("Successfully logged into %s", username))
 	return nil
 }
 
 // Deposit gets the curr value, adds deposit, and updates DB
 func Deposit(wallet *Wallet, args []string) error {
-	fmt.Println("Depositing...")
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
 
 	amountStr := args[0]
 
-	// Get balance from DB
-	var bal int
-	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
-
-	// Convert deposit value to int
-	amount, err := strconv.Atoi(amountStr)
+	err := topUp(wallet.Username, amountStr)
 	if err != nil {
 		return err
-	}
-
-	// Update balance into DB
-	err = db.GlobalBalanceTable.Put(wallet.Username, bal+amount)
-	if err != nil {
-		return custError.InternalDBError
 	}
 
 	fmt.Println(fmt.Sprintf("Successfully deposited $%v", amountStr))
 	return nil
 }
 
-func Withdraw(user *Wallet, args []string) error {
-	fmt.Println("Withdrawing...")
+func Withdraw(wallet *Wallet, args []string) error {
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
-	//amount := args[0]
 
+	amountStr := args[0]
+
+	err := drawDown(wallet.Username, amountStr)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(fmt.Sprintf("Successfully withdrew $%v", amountStr))
 	return nil
 }
 
-func Send(user *Wallet, args []string) error {
-	fmt.Println("Sending...")
+func Send(wallet *Wallet, args []string) error {
 	if len(args) != 2 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
-	//username := args[0]
-	//amount := args[1]
 
+	username := args[0]
+	amount := args[1]
+
+	//drawDown from source account
+	err := drawDown(wallet.Username, amount)
+	if err != nil {
+		return err
+	}
+
+	// topUp to destination account
+	err = topUp(username, amount)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(fmt.Sprintf("Successfully sent (%s): $%s", username, amount))
 	return nil
 }
 
 func Balance(wallet *Wallet) error {
-	fmt.Println("Retrieving Balance...")
 
 	// Get balance from DB
 	var bal int
@@ -122,22 +127,22 @@ func Balance(wallet *Wallet) error {
 		return err
 	}
 
-	fmt.Println(fmt.Sprintf("Current balance for (%s): %d", wallet.Username, bal))
-
+	fmt.Println(fmt.Sprintf("Current balance for (%s): $%d", wallet.Username, bal))
 	return nil
 }
 
-func Logout(user *Wallet) error {
-	fmt.Println("Logging out...")
+func Logout(wallet *Wallet) error {
 
-	*user = Wallet{}
+	// Logout
+	*wallet = Wallet{}
+
+	fmt.Println(fmt.Sprintf("Successfully logged out of %s", wallet.Username))
 	return nil
 }
 
-func Accounts(user *Wallet) error {
-	fmt.Println("Retrieving Accounts...")
+func Accounts(wallet *Wallet) error {
 
-	if user.Username != "admin" {
+	if wallet.Username != "admin" {
 		return custError.PermissionError
 	}
 
@@ -158,7 +163,7 @@ func Accounts(user *Wallet) error {
 			return err
 		}
 
-		fmt.Println(fmt.Sprintf("Username: %s, Balance: %d", scanner.Text(), bal))
+		fmt.Println(fmt.Sprintf("Username: %s, Balance: $%d", scanner.Text(), bal))
 	}
 
 	return nil
