@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/rapidloop/skv"
 	"os"
+	"strconv"
 	"strings"
 
 	"errors"
@@ -68,8 +69,13 @@ func Deposit(wallet *Wallet, args []string) error {
 	}
 
 	amountStr := args[0]
+	// Convert topUp value to int
+	amount, err := strconv.Atoi(amountStr)
+	if err != nil {
+		return err
+	}
 
-	err := topUp(wallet.Username, amountStr)
+	err = topUp(wallet.Username, amount)
 	if err != nil {
 		return err
 	}
@@ -83,9 +89,14 @@ func Withdraw(wallet *Wallet, args []string) error {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
 
+	// Convert drawDown value to int
 	amountStr := args[0]
+	amount, err := strconv.Atoi(amountStr)
+	if err != nil {
+		return err
+	}
 
-	err := drawDown(wallet.Username, amountStr)
+	err = drawDown(wallet.Username, amount)
 	if err != nil {
 		return err
 	}
@@ -100,10 +111,16 @@ func Send(wallet *Wallet, args []string) error {
 	}
 
 	username := args[0]
-	amount := args[1]
+	amountStr := args[1]
+
+	// Convert amount value to int
+	amount, err := strconv.Atoi(amountStr)
+	if err != nil {
+		return err
+	}
 
 	//drawDown from source account
-	err := drawDown(wallet.Username, amount)
+	err = drawDown(wallet.Username, amount)
 	if err != nil {
 		return err
 	}
@@ -114,7 +131,7 @@ func Send(wallet *Wallet, args []string) error {
 		return err
 	}
 
-	fmt.Println(fmt.Sprintf("Successfully sent (%s): $%s", username, amount))
+	fmt.Println(fmt.Sprintf("Successfully sent (%s): $%d", username, amount))
 	return nil
 }
 
