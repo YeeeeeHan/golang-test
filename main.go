@@ -27,7 +27,7 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
 
-		command, _ := utils.ParseInput(text)
+		command, args := utils.ParseInput(text)
 
 		if command != constants.Login && user == (service.User{}) {
 			fmt.Println(constants.NotLoggedInMsg)
@@ -36,17 +36,19 @@ func main() {
 
 		switch command {
 		case constants.Login:
-			fmt.Println("Prcoessing 'Login'...")
+			_ = service.Login(&user, args)
+		case constants.Deposit:
+			_ = service.Deposit(&user, args)
 		case constants.Withdraw:
-			fmt.Println("Prcoessing 'Withdraw'...")
+			_ = service.Withdraw(&user, args)
 		case constants.Send:
-			fmt.Println("Prcoessing 'Send'...")
+			_ = service.Send(&user, args)
 		case constants.Balance:
-			fmt.Println("Prcoessing 'Balance'...")
+			_ = service.Balance(&user)
 		case constants.Logout:
-			fmt.Println("Prcoessing 'Logout'...")
+			_ = service.Logout(&user)
 		case constants.Accounts:
-			fmt.Println("Prcoessing 'Accounts'...")
+			_ = service.Accounts(&user)
 		default:
 			fmt.Println(constants.InvalidCommandMsg)
 		}
