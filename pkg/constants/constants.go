@@ -13,3 +13,6 @@ const Accounts = "accounts"
 const InvalidCommandMsg = "command not recognised"
 const InvalidNumArgumentsMsg = "invalid number of arguments"
 const NotLoggedInMsg = "please log in first"
+
+// User
+const Unregistered = "NIL"

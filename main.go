@@ -23,17 +23,19 @@ func main() {
 			"\n logout - logout" +
 			"\n accounts - view all account information (admin only)")
 	for {
-		fmt.Print("\n>")
+		fmt.Print(fmt.Sprintf("\nUser: %s > ", user.GetUsername()))
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
 
 		command, args := utils.ParseInput(text)
 
+		// Ensure user is logged in before processing any commands
 		if command != constants.Login && user == (service.User{}) {
 			fmt.Println(constants.NotLoggedInMsg)
 			continue
 		}
 
+		// Process commands
 		switch command {
 		case constants.Login:
 			_ = service.Login(&user, args)

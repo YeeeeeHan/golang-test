@@ -14,7 +14,7 @@ func Login(user *User, args []string) error {
 	}
 
 	username := args[0]
-	user.username = username
+	user.Username = username
 
 	return nil
 }
@@ -25,7 +25,7 @@ func Deposit(user *User, args []string) error {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
 
-	amount := args[0]
+	//amount := args[0]
 
 	return nil
 }
@@ -35,7 +35,7 @@ func Withdraw(user *User, args []string) error {
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
-	amount := args[0]
+	//amount := args[0]
 
 	return nil
 }
@@ -45,8 +45,8 @@ func Send(user *User, args []string) error {
 	if len(args) != 2 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
-	username := args[0]
-	amount := args[1]
+	//username := args[0]
+	//amount := args[1]
 
 	return nil
 }
