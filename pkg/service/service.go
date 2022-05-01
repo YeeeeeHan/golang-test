@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"github.com/rapidloop/skv"
 	"os"
+	"strconv"
+	"strings"
 
 	"errors"
 )
@@ -20,6 +22,8 @@ func Register(wallet *Wallet, args []string) error {
 
 	username := args[0]
 	password := args[1]
+
+	fmt.Println(fmt.Sprintf("Username: %s, password: %s", username, password))
 
 	err := db.CreateUser(username, password)
 	if err != nil {
@@ -58,14 +62,32 @@ func Login(wallet *Wallet, args []string) error {
 	return nil
 }
 
+// Deposit gets the curr value, adds deposit, and updates DB
 func Deposit(wallet *Wallet, args []string) error {
 	fmt.Println("Depositing...")
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
 
-	//amount := args[0]
+	amountStr := args[0]
 
+	// Get balance from DB
+	var bal int
+	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
+
+	// Convert deposit value to int
+	amount, err := strconv.Atoi(amountStr)
+	if err != nil {
+		return err
+	}
+
+	// Update balance into DB
+	err = db.GlobalBalanceTable.Put(wallet.Username, bal+amount)
+	if err != nil {
+		return custError.InternalDBError
+	}
+
+	fmt.Println(fmt.Sprintf("Successfully deposited $%v", amountStr))
 	return nil
 }
 
@@ -90,8 +112,17 @@ func Send(user *Wallet, args []string) error {
 	return nil
 }
 
-func Balance(user *Wallet) error {
+func Balance(wallet *Wallet) error {
 	fmt.Println("Retrieving Balance...")
+
+	// Get balance from DB
+	var bal int
+	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(fmt.Sprintf("Current balance for (%s): %d", wallet.Username, bal))
 
 	return nil
 }
@@ -121,12 +152,13 @@ func Accounts(user *Wallet) error {
 	// For each username, print balance
 	for scanner.Scan() {
 		var bal int
-		err = db.GlobalBalanceTable.Get(scanner.Text(), &bal)
-		fmt.Println(fmt.Sprintf("Username: %s, Balance: %v", scanner.Text(), bal))
-	}
+		// Get balance from DB
+		err = db.GlobalBalanceTable.Get(strings.TrimSpace(scanner.Text()), &bal)
+		if err != nil {
+			return err
+		}
 
-	if err := scanner.Err(); err != nil {
-		return custError.InternalDBError
+		fmt.Println(fmt.Sprintf("Username: %s, Balance: %d", scanner.Text(), bal))
 	}
 
 	return nil

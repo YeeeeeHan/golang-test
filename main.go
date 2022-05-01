@@ -90,7 +90,7 @@ func main() {
 			fmt.Println(constants.InvalidCommandMsg)
 		}
 		if err != nil {
-			fmt.Println(fmt.Sprintf("Attention: %s!", err))
+			fmt.Println(fmt.Sprintf("ERROR: %s!", err))
 		}
 	}
 }

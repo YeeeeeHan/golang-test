@@ -47,7 +47,7 @@ func CreateUser(username, password string) error {
 	}
 
 	// Add username to passwordTable
-	err = GlobalBalanceTable.Put(username, 0)
+	err = GlobalBalanceTable.Put(username, int(0))
 	if err != nil {
 		return custError.InternalDBError
 	}
