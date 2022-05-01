@@ -8,6 +8,7 @@ import (
 )
 
 func TestParseInput_Commands(t *testing.T) {
+	registerInput := "register abc def"
 	loginInput := "login abc"
 	depositInput := "deposit 123"
 	withdrawInput := "withdraw 123"
@@ -21,6 +22,10 @@ func TestParseInput_Commands(t *testing.T) {
 	withdrawArgs := []string{"123"}
 	sendArgs := []string{"abc", "123"}
 	emptyArgs := []string{}
+
+	command0, args0 := ParseInput(registerInput)
+	assert.Equal(t, constants.Register, command0, fmt.Sprintf("Parsed command is not %s", constants.Register))
+	assert.Equal(t, loginArgs, args0, fmt.Sprintf("Parsed args is not %+v", loginArgs))
 
 	command1, args1 := ParseInput(loginInput)
 	assert.Equal(t, constants.Login, command1, fmt.Sprintf("Parsed command is not %s", constants.Login))

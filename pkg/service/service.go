@@ -1,16 +1,47 @@
 package service
 
 import (
+	"TechnicalAssignment/cmd/db"
 	"TechnicalAssignment/pkg/constants"
+	"TechnicalAssignment/pkg/custError"
 	"fmt"
+	"github.com/rapidloop/skv"
 
 	"errors"
 )
 
+func Register(user *User, args []string) error {
+	fmt.Println("Registering...")
+	if len(args) != 2 {
+		return custError.InvalidNumArguments
+	}
+
+	username := args[0]
+	password := args[1]
+
+	// If username already exists, return error
+	var val string
+	err := db.GlobalPasswordTable.Get(username, &val)
+	if err != skv.ErrNotFound {
+		return custError.AccountExistsError
+	}
+
+	// Add username to DB
+	err = db.GlobalPasswordTable.Put(username, password)
+	if err != nil {
+		return custError.InternalDBError
+	}
+
+	// Login user
+	user.Username = username
+
+	return nil
+}
+
 func Login(user *User, args []string) error {
-	fmt.Println("Processing 'Login'...")
-	if len(args) != 1 {
-		return errors.New(constants.InvalidNumArgumentsMsg)
+	fmt.Println("Logging in...")
+	if len(args) != 2 {
+		return custError.InvalidNumArguments
 	}
 
 	username := args[0]
@@ -20,7 +51,7 @@ func Login(user *User, args []string) error {
 }
 
 func Deposit(user *User, args []string) error {
-	fmt.Println("Processing 'Deposit'...")
+	fmt.Println("Depositing...")
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
@@ -31,7 +62,7 @@ func Deposit(user *User, args []string) error {
 }
 
 func Withdraw(user *User, args []string) error {
-	fmt.Println("Processing 'Withdraw'...")
+	fmt.Println("Withdrawing...")
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
@@ -41,7 +72,7 @@ func Withdraw(user *User, args []string) error {
 }
 
 func Send(user *User, args []string) error {
-	fmt.Println("Processing 'Send'...")
+	fmt.Println("Sending...")
 	if len(args) != 2 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
@@ -52,20 +83,20 @@ func Send(user *User, args []string) error {
 }
 
 func Balance(user *User) error {
-	fmt.Println("Processing 'Balance'...")
+	fmt.Println("Retrieving Balance...")
 
 	return nil
 }
 
 func Logout(user *User) error {
-	fmt.Println("Processing 'Logout'...")
+	fmt.Println("Logging out...")
 
 	*user = User{}
 	return nil
 }
 
 func Accounts(user *User) error {
-	fmt.Println("Processing 'Accounts'...")
+	fmt.Println("Retrieving Accounts...")
 
 	return nil
 }

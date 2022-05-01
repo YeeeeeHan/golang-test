@@ -1,6 +1,7 @@
 package main
 
 import (
+	"TechnicalAssignment/cmd/db"
 	"TechnicalAssignment/pkg/constants"
 	"TechnicalAssignment/pkg/service"
 	"TechnicalAssignment/pkg/utils"
@@ -9,13 +10,40 @@ import (
 	"os"
 )
 
+//db.GlobalBalanceTable.Put("def", 456)
+//var bal int
+//_ = db.GlobalBalanceTable.Get("def", &bal)
+//fmt.Println(bal)
+
 func main() {
 
+	// Init Balance Table
+	var initerr error
+	db.GlobalBalanceTable, initerr = db.InitBalanceTable()
+	if initerr != nil {
+		panic("balance DB init error")
+	}
+
+	// Init Password Table
+	db.GlobalPasswordTable, initerr = db.InitPasswordTable()
+	if initerr != nil {
+		panic("password DB init error")
+	}
+
+	// Close DB
+	defer db.CloseDB(db.GlobalBalanceTable)
+	defer db.CloseDB(db.GlobalPasswordTable)
+
+	// Init User
 	user := service.User{}
+
+	// Register Admin
+	db.GlobalPasswordTable.Put("admin", "password123")
 
 	fmt.Println(
 		"Please Enter a command: " +
-			"\n login <username> - login" +
+			"\n register <username> <password> - adds an account with username and password" +
+			"\n login <username> <password>- login with username and password" +
 			"\n deposit <x> - deposit $x to your account" +
 			"\n withdraw <x> - withdraw $x from your account" +
 			"\n send <username> <x> - sends $x to <username>" +
@@ -29,30 +57,45 @@ func main() {
 
 		command, args := utils.ParseInput(text)
 
-		// Ensure user is logged in before processing any commands
-		if command != constants.Login && user == (service.User{}) {
+		// Handle Register command
+		if command == constants.Register {
+			err := service.Register(&user, args)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println(constants.RegisterSuccess)
+			}
+			continue
+		}
+
+		// If user is not logged in, they cannot initiate any commands other than 'Login'
+		if user == (service.User{}) && command != constants.Login {
 			fmt.Println(constants.NotLoggedInMsg)
 			continue
 		}
 
 		// Process commands
+		var err error
 		switch command {
 		case constants.Login:
-			_ = service.Login(&user, args)
+			err = service.Login(&user, args)
 		case constants.Deposit:
-			_ = service.Deposit(&user, args)
+			err = service.Deposit(&user, args)
 		case constants.Withdraw:
-			_ = service.Withdraw(&user, args)
+			err = service.Withdraw(&user, args)
 		case constants.Send:
-			_ = service.Send(&user, args)
+			err = service.Send(&user, args)
 		case constants.Balance:
-			_ = service.Balance(&user)
+			err = service.Balance(&user)
 		case constants.Logout:
-			_ = service.Logout(&user)
+			err = service.Logout(&user)
 		case constants.Accounts:
-			_ = service.Accounts(&user)
+			err = service.Accounts(&user)
 		default:
 			fmt.Println(constants.InvalidCommandMsg)
+		}
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 }
