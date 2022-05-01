@@ -17,28 +17,22 @@ import (
 
 func main() {
 
-	// Init Balance Table
+	// Init Tables
 	var initerr error
-	db.GlobalBalanceTable, initerr = db.InitBalanceTable()
+	db.GlobalBalanceTable, db.GlobalPasswordTable, initerr = db.InitTables()
 	if initerr != nil {
-		panic("balance DB init error")
-	}
-
-	// Init Password Table
-	db.GlobalPasswordTable, initerr = db.InitPasswordTable()
-	if initerr != nil {
-		panic("password DB init error")
+		panic("DB init error")
 	}
 
 	// Close DB
 	defer db.CloseDB(db.GlobalBalanceTable)
 	defer db.CloseDB(db.GlobalPasswordTable)
 
-	// Init User
-	user := service.User{}
+	// Init Wallet
+	sessionUser := service.Wallet{}
 
 	// Register Admin
-	db.GlobalPasswordTable.Put("admin", "password123")
+	db.CreateUser("admin", "password123")
 
 	fmt.Println(
 		"Please Enter a command: " +
@@ -50,8 +44,9 @@ func main() {
 			"\n balance - shows your acccount balance" +
 			"\n logout - logout" +
 			"\n accounts - view all account information (admin only)")
+
 	for {
-		fmt.Print(fmt.Sprintf("\nUser: %s > ", user.GetUsername()))
+		fmt.Print(fmt.Sprintf("\n(%s) > ", sessionUser.GetUsername()))
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
 
@@ -59,7 +54,7 @@ func main() {
 
 		// Handle Register command
 		if command == constants.Register {
-			err := service.Register(&user, args)
+			err := service.Register(&sessionUser, args)
 			if err != nil {
 				fmt.Println(err)
 			} else {
@@ -69,7 +64,7 @@ func main() {
 		}
 
 		// If user is not logged in, they cannot initiate any commands other than 'Login'
-		if user == (service.User{}) && command != constants.Login {
+		if sessionUser == (service.Wallet{}) && command != constants.Login {
 			fmt.Println(constants.NotLoggedInMsg)
 			continue
 		}
@@ -78,24 +73,24 @@ func main() {
 		var err error
 		switch command {
 		case constants.Login:
-			err = service.Login(&user, args)
+			err = service.Login(&sessionUser, args)
 		case constants.Deposit:
-			err = service.Deposit(&user, args)
+			err = service.Deposit(&sessionUser, args)
 		case constants.Withdraw:
-			err = service.Withdraw(&user, args)
+			err = service.Withdraw(&sessionUser, args)
 		case constants.Send:
-			err = service.Send(&user, args)
+			err = service.Send(&sessionUser, args)
 		case constants.Balance:
-			err = service.Balance(&user)
+			err = service.Balance(&sessionUser)
 		case constants.Logout:
-			err = service.Logout(&user)
+			err = service.Logout(&sessionUser)
 		case constants.Accounts:
-			err = service.Accounts(&user)
+			err = service.Accounts(&sessionUser)
 		default:
 			fmt.Println(constants.InvalidCommandMsg)
 		}
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(fmt.Sprintf("Attention: %s!", err))
 		}
 	}
 }

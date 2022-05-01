@@ -15,10 +15,17 @@ const InternalDBErrMsg = "internal error with database"
 const InvalidCommandMsg = "command not recognised"
 const InvalidNumArgumentsMsg = "invalid number of arguments"
 const AccountExistsMsg = "username already exists"
+const WrongCredentialsMsg = "wrong username or password"
 const NotLoggedInMsg = "please log in first"
+const PermissionErrorMsg = "you do not have the permissions"
 
 // Success Messages
 const RegisterSuccess = "successfully registered!"
 
 // User
 const Unregistered = "NIL"
+
+// Files
+const UsernameFile = "cmd/db/username.txt"
+const BalanceFile = "cmd/db/balance.db"
+const PasswordFile = "cmd/db/password.db"

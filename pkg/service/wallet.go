@@ -2,13 +2,13 @@ package service
 
 import "TechnicalAssignment/pkg/constants"
 
-type User struct {
+type Wallet struct {
 	Username string
 }
 
-func (u *User) GetUsername() string {
-	if u.Username == "" {
+func (w *Wallet) GetUsername() string {
+	if w.Username == "" {
 		return constants.Unregistered
 	}
-	return u.Username
+	return w.Username
 }
