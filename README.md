@@ -195,10 +195,10 @@ Tests in this project follow 2 structures:
 1. `TestMain()` provides more high order functionality such a connecting to a test database and creating files before the tests, and deleting test database and files after the tests.
 
    ![](https://i.ibb.co/KDpcB6t/Screen-Shot-2022-05-02-at-6-52-08-PM.png )
-2. `TestExample()` is the meat of the testing logic, consisting of a `testTable` slice of custom test objects. Each test object specifies the test name, requires inputs, and desires outputs. A for loop is used to loop over the range of `testTable` slice, called a specific function to be testing (`functionToBeTest` in this case), and asserting that the input and output fields of each `testTable` object (`tt` in this case) are equal.
+2. `TestExample()` is the meat of the testing logic, consisting of a `testTable` slice of custom test objects. Each test object specifies the test name, required inputs, and desired outputs. A for loop is used to loop over the range of `testTable` slice, and calls a specific function to be tested (`functionToBeTest` in this case), asserting that the input and output fields of each `testTable` object (`tt`) are equal.
    ![](https://i.ibb.co/XJtD2Nf/Screen-Shot-2022-05-02-at-6-50-40-PM.png )
 
-There are 2 main areas that need to be tested:
+There are 3 main areas that needs to be tested:
 1. Parsing of user input --- `utils.ParseInput()`
 2. Individual handlers in `service.go` --- `Login()`, `Register()`, etc
 3. User flow --- e.g. User can only withdraw after logging in
@@ -215,6 +215,9 @@ _service_test.go()_
 5. Ensure `withdraw` and `send` does not happen when insufficient funds
 6. Ensure `send` deducts from source account and credits destination account
 7. Ensure `send` argument's destination account exists
+
+_user flow_
+User flow is tested manually.
 
 
 # Reflection and Areas of Improvement
