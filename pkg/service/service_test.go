@@ -63,15 +63,6 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(exitVal)
-
-	////log.Println("SUCCESSFUL INIT")
-	////// If username already exists in passwordTable, return error
-	//var getPw string
-	//err = db.GlobalPasswordTable.Get("adminzzz", &getPw)
-	//if err != nil {
-	//	log.Println("errrr??", err)
-	//}
-	//log.Println("adminzzz PW", getPw)
 }
 
 func TestTopUp(t *testing.T) {

@@ -23,9 +23,6 @@ const PermissionErrorMsg = "you do not have the permissions"
 const InsufficientFundsMsg = "account has insufficient funds"
 const NegativeValueMsg = "value must be positive"
 
-// Success Messages
-const RegisterSuccess = "successfully registered!"
-
 // User
 const Unregistered = "NIL"
 
