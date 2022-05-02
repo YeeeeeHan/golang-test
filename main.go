@@ -8,11 +8,6 @@ import (
 	"fmt"
 )
 
-//db.GlobalBalanceTable.Put("def", 456)
-//var bal int
-//_ = db.GlobalBalanceTable.Get("def", &bal)
-//fmt.Println(bal)
-
 func main() {
 
 	// Init Tables
