@@ -38,7 +38,7 @@ In this coding test, I have opted to use Golang as my preferred language.
 ```
 
 Explanation of packages:
-- **main.go**: Main entry point point for the application
+- **main.go**: Main entry point for the application
 - **cmd**: Contains packages that are used internally in this application
 - **db**: Contains logic related to CRUD operations to the database, as well as DB files
 - **server**: Contains blocking logic to listen for user input
@@ -105,6 +105,7 @@ To effectively keep track of which user is operating the application, user sessi
 ![](https://i.ibb.co/ftstYQg/Screen-Shot-2022-05-02-at-5-43-02-PM.png )
 
 The `sessionUser` is instantiated in `main.go` and its reference is passed into `server.ListenAndServe()`.
+
 ![](https://i.ibb.co/1LtLJyM/Screen-Shot-2022-05-02-at-5-44-30-PM.png )
 
 To log in in or log out, pointer to the `sessionUser` is modified by assigning a `username`  or an empty struct. If the `Username` field is not set, `GetUsername()` returns `NIL`, which is displayed on the terminal display.

@@ -1,3 +1,2 @@
 admin
-testreviewer
-janedoe
+johndoe
