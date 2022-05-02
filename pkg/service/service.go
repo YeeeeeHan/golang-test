@@ -159,10 +159,9 @@ func Balance(wallet *Wallet) (int, error) {
 
 // Logout set the current user in the session to an empty Wallet struct end the user session
 func Logout(wallet *Wallet) error {
+	fmt.Println(fmt.Sprintf("Successfully logged out of %s", wallet.Username))
 	// Logout
 	*wallet = Wallet{}
-
-	fmt.Println(fmt.Sprintf("Successfully logged out of %s", wallet.Username))
 	return nil
 }
 

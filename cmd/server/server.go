@@ -27,8 +27,6 @@ func ListenAndServe(sessionUser *service.Wallet) {
 			err := service.Register(sessionUser, args)
 			if err != nil {
 				fmt.Println(err)
-			} else {
-				fmt.Println(constants.RegisterSuccess)
 			}
 			continue
 		}
