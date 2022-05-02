@@ -3,6 +3,8 @@ package service
 import (
 	"TechnicalAssignment/cmd/db"
 	"TechnicalAssignment/pkg/custError"
+	"errors"
+	"github.com/rapidloop/skv"
 )
 
 // drawDown abstracts the logic to:
@@ -17,6 +19,12 @@ func drawDown(username string, amount int) error {
 	// Get balance from DB
 	var bal int
 	err := db.GlobalBalanceTable.Get(username, &bal)
+	if errors.Is(err, skv.ErrNotFound) {
+		return custError.AccountsDoesNotExistError
+	}
+	if err != nil {
+		return custError.InternalDBError
+	}
 
 	// Sanity check
 	if amount > bal {
@@ -44,6 +52,9 @@ func topUp(username string, amount int) error {
 	// Get balance from DB
 	var bal int
 	err := db.GlobalBalanceTable.Get(username, &bal)
+	if errors.Is(err, skv.ErrNotFound) {
+		return custError.AccountsDoesNotExistError
+	}
 	if err != nil {
 		return custError.InternalDBError
 	}

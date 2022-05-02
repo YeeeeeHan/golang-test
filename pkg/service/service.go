@@ -150,11 +150,11 @@ func Balance(wallet *Wallet) (int, error) {
 	var bal int
 	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
 	if err != nil {
-		return 0, err
+		return 0, custError.AccountsDoesNotExistError
 	}
 
 	fmt.Println(fmt.Sprintf("Current balance for (%s): $%d", wallet.Username, bal))
-	return 0, nil
+	return bal, nil
 }
 
 // Logout set the current user in the session to an empty Wallet struct end the user session
@@ -166,7 +166,7 @@ func Logout(wallet *Wallet) error {
 	return nil
 }
 
-// Accounts reads all the outputUsername from the UsernameFile and retrieves all their balances.
+// Accounts reads all the username from the UsernameFile and retrieves all their balances.
 // Can only be operated by admin user.
 func Accounts(wallet *Wallet) error {
 	if wallet.Username != "admin" {
@@ -181,7 +181,7 @@ func Accounts(wallet *Wallet) error {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 
-	// For each outputUsername, print balance
+	// For each username, print balance
 	for scanner.Scan() {
 		var bal int
 		// Get balance from DB
