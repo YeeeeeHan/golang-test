@@ -216,7 +216,9 @@ _service_test.go()_
 6. Ensure `send` deducts from source account and credits destination account
 7. Ensure `send` argument's destination account exists
 
+
 _user flow_
+
 User flow is tested manually.
 
 
