@@ -225,8 +225,8 @@ User flow is tested manually.
 # Reflection and Areas of Improvement
 
 Throughout the course of this task, I had 2 main goals:
-1 ) Keep the code/project as simple and clean as possible
-2) Make the user flow and experience as foolproof and bulletproof as possible
+1. Keep the code/project as simple and clean as possible 
+2. Make the user flow and experience as foolproof and bulletproof as possible
 
 In terms of my first goal, I felt that I was off to a good start initially as I had taken a pretty long time to plan the overall concept of the application, as well as a clear and differentiated project structure. However, the persistent data store added a bit of complexity to the project because I had to balance between creating a simple implementation and ensuring its persistence was reliable.
 
