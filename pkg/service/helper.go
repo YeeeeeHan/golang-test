@@ -37,13 +37,16 @@ func drawDown(username string, amount int) error {
 // 2. Add amount to balance
 // 3. Update balance to DB
 func topUp(username string, amount int) error {
-	if amount <= 0 {
+	if amount < 0 {
 		return custError.NegativeValueError
 	}
 
 	// Get balance from DB
 	var bal int
 	err := db.GlobalBalanceTable.Get(username, &bal)
+	if err != nil {
+		return custError.InternalDBError
+	}
 
 	// Update balance into DB
 	err = db.GlobalBalanceTable.Put(username, bal+amount)

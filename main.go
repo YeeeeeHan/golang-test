@@ -3,6 +3,7 @@ package main
 import (
 	"TechnicalAssignment/cmd/db"
 	"TechnicalAssignment/cmd/server"
+	"TechnicalAssignment/pkg/constants"
 	"TechnicalAssignment/pkg/service"
 	"fmt"
 )
@@ -15,8 +16,9 @@ import (
 func main() {
 
 	// Init Tables
+	db.GlobalUsernameTable = constants.UsernameFile
 	var initerr error
-	db.GlobalBalanceTable, db.GlobalPasswordTable, initerr = db.InitTables()
+	db.GlobalBalanceTable, db.GlobalPasswordTable, initerr = db.InitTables(constants.BalanceFile, constants.PasswordFile)
 	if initerr != nil {
 		panic("DB init error")
 	}

@@ -1,7 +1,6 @@
 package db
 
 import (
-	"TechnicalAssignment/pkg/constants"
 	"TechnicalAssignment/pkg/custError"
 	"github.com/rapidloop/skv"
 	"os"
@@ -9,15 +8,16 @@ import (
 
 var GlobalBalanceTable *skv.KVStore
 var GlobalPasswordTable *skv.KVStore
+var GlobalUsernameTable string
 
 // InitTables inits the balance and password tables
-func InitTables() (*skv.KVStore, *skv.KVStore, error) {
-	balanceStore, err := skv.Open(constants.BalanceFile)
+func InitTables(balanceStorePath, passwordStorePath string) (*skv.KVStore, *skv.KVStore, error) {
+	balanceStore, err := skv.Open(balanceStorePath)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	passwordStore, err := skv.Open(constants.PasswordFile)
+	passwordStore, err := skv.Open(passwordStorePath)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -57,7 +57,7 @@ func CreateUser(username, password string) error {
 	}
 
 	// Add username to usernameTable
-	f, err := os.OpenFile(constants.UsernameFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(GlobalUsernameTable, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 	_, err = f.WriteString(username + "\n")
 	if err != nil {

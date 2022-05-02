@@ -72,7 +72,7 @@ func Deposit(wallet *Wallet, args []string) error {
 	// Convert topUp value to int
 	amount, err := strconv.Atoi(amountStr)
 	if err != nil {
-		return err
+		return custError.InvalidArguments
 	}
 
 	err = topUp(wallet.Username, amount)
@@ -94,7 +94,7 @@ func Withdraw(wallet *Wallet, args []string) error {
 	amountStr := args[0]
 	amount, err := strconv.Atoi(amountStr)
 	if err != nil {
-		return err
+		return custError.InvalidArguments
 	}
 
 	err = drawDown(wallet.Username, amount)
@@ -125,7 +125,7 @@ func Send(wallet *Wallet, args []string) error {
 	// Convert amount value to int
 	amount, err := strconv.Atoi(amountStr)
 	if err != nil {
-		return err
+		return custError.InvalidArguments
 	}
 
 	//drawDown from source account
@@ -145,16 +145,16 @@ func Send(wallet *Wallet, args []string) error {
 }
 
 // Balance retrieves the balance for the user in the current session
-func Balance(wallet *Wallet) error {
+func Balance(wallet *Wallet) (int, error) {
 	// Get balance from DB
 	var bal int
 	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	fmt.Println(fmt.Sprintf("Current balance for (%s): $%d", wallet.Username, bal))
-	return nil
+	return 0, nil
 }
 
 // Logout set the current user in the session to an empty Wallet struct end the user session
@@ -166,7 +166,7 @@ func Logout(wallet *Wallet) error {
 	return nil
 }
 
-// Accounts reads all the username from the UsernameFile and retrieves all their balances.
+// Accounts reads all the outputUsername from the UsernameFile and retrieves all their balances.
 // Can only be operated by admin user.
 func Accounts(wallet *Wallet) error {
 	if wallet.Username != "admin" {
@@ -174,14 +174,14 @@ func Accounts(wallet *Wallet) error {
 	}
 
 	// Open file
-	file, err := os.Open(constants.UsernameFile)
+	file, err := os.Open(db.GlobalUsernameTable)
 	if err != nil {
 		return custError.InternalDBError
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 
-	// For each username, print balance
+	// For each outputUsername, print balance
 	for scanner.Scan() {
 		var bal int
 		// Get balance from DB

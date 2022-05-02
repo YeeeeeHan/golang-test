@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/rapidloop/skv v0.0.0-20180909015525-9def2caac4cc
 	github.com/stretchr/testify v1.7.1
+	github.com/zenizh/go-capturer v0.0.0-20211219060012-52ea6c8fed04
 )
 
 require (

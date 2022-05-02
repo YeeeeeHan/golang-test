@@ -17,6 +17,10 @@ func ListenAndServe(sessionUser *service.Wallet) {
 		text, _ := reader.ReadString('\n')
 
 		command, args := utils.ParseInput(text)
+		if command == "" {
+			fmt.Println(constants.InvalidNumArgumentsMsg)
+			continue
+		}
 
 		// Handle Register command
 		if command == constants.Register {
@@ -47,7 +51,7 @@ func ListenAndServe(sessionUser *service.Wallet) {
 		case constants.Send:
 			err = service.Send(sessionUser, args)
 		case constants.Balance:
-			err = service.Balance(sessionUser)
+			_, err = service.Balance(sessionUser)
 		case constants.Logout:
 			err = service.Logout(sessionUser)
 		case constants.Accounts:
