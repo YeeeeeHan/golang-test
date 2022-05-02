@@ -228,7 +228,7 @@ Throughout the course of this task, I had 2 main goals:
 1. Keep the code/project as simple and clean as possible 
 2. Make the user flow and experience as foolproof and bulletproof as possible
 
-In terms of my first goal, I felt that I was off to a good start initially as I had taken a pretty long time to plan the overall concept of the application, as well as a clear and differentiated project structure. However, the persistent data store added a bit of complexity to the project because I had to balance between creating a simple implementation and ensuring its persistence was reliable.
+In terms of my first goal, I felt that I was off to a good start initially as I had taken a pretty long time to plan the overall concept of the application, as well as having a clear and differentiated project structure. However, the persistent data store added a bit of complexity to the project because I had to balance between creating a simple implementation and ensuring its persistence was reliable.
 
 As a result, I am aware that the implementation of files as tables might not be a very clean solution compared to using a separate database like Postgres. However, I felt that I had navigated this trade-off to the best of my abilities.
 
@@ -236,5 +236,5 @@ Regarding the code cleanliness, I tried to extract repeated logic and constants 
 
 In terms of my second goal, I am confident that I have considered all cases of user flow, and handled all errors gracefully with concise error messages. I have spent the largest proportion of my time on testing - manual user flow testing and writing test. However, I feel that I could have included flow testing as integration tests, to ensure certain user flows are forbidden and handled.
 
-Lastly, I hope that the user experience is as clear as possible, where all information shown or required is minimal and necessary, and users will not need much prompts to understand how to operation the application. 
+Lastly, I hope that the user experience is as clear as possible, where all information shown or required is minimal and necessary, and users will not need much prompts to understand how to operate the application. 
 
