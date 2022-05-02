@@ -108,14 +108,14 @@ The `sessionUser` is instantiated in `main.go` and its reference is passed into 
 
 ![](https://i.ibb.co/1LtLJyM/Screen-Shot-2022-05-02-at-5-44-30-PM.png )
 
-To log in in or log out, pointer to the `sessionUser` is modified by assigning a `username`  or an empty struct. If the `Username` field is not set, `GetUsername()` returns `NIL`, which is displayed on the terminal display.
+To log in in or log out, pointer to the `sessionUser` is modified by assigning a `username`  or an empty struct respectively. If the `Username` field is not set, `GetUsername()` returns `NIL`, which is displayed on the terminal display.
 
 Once `Username` is set, subsequent commands will be effective upon the binded `Username` in the `sessionUser(aka wallet)` pointer.
 ![](https://i.ibb.co/XStJz47/Screen-Shot-2022-05-02-at-5-46-17-PM.png )
 ![](https://i.ibb.co/FnZ1WR4/Screen-Shot-2022-05-02-at-5-56-09-PM.png )
 
 ### Parsing user input
-The simplest way for user to input instructions via terminal would be to enter a white-space separated strings, according to instructions displayed upon starting the programme. Hence, `utils.ParseInput()` is used to parse the input.
+The simplest way for user to input instructions via terminal would be to enter a white-space separated string, according to instructions displayed upon starting the programme. Hence, `utils.ParseInput()` is used to parse the input.
 
 It does the following:
 1. return if input is an empty string
@@ -168,14 +168,14 @@ _Accounts()_
 3. Queries `balance.db` for each username and print it out
 
 ### service.topUp() and service.drawDown()
-These couple helper functions in the `service` package exists to extract the repeated logic of:
+These couple of helper functions in the `service` package exists to extract the repeated logic of:
 1. Adding or subtracting `x` amount from an account
 2. Performing sanity checks --- e.g. Ensure no negative values, ensure funds > amount to be subtracted
 
 This prevents repeated code, more specifically in the `Send()`, `Withdraw()`, and `Deposit()` function, because sending money from A to B is essentially withdrawing money from A and depositing money to B.
 
 ### Constants
-`pkg/constants` contains all constants that are used in the project. This provides a source of truth for constants that are depended upon throughout the project, and one only needs to edit them in this file for the changes to be propagated throughout the project.
+`pkg/constants` contains all constants that are used in the project. This provides a source of truth for all constants that are depended upon throughout the project, and one only needs to edit them in this file for the changes to be propagated throughout.
 
 These are the main type of constants:
 1. Commands --- e.g. `"register"`, `"withdraw"`
@@ -193,6 +193,7 @@ These are the main type of constants:
 Tests in this project follow 2 structures:
 
 1. `TestMain()` provides more high order functionality such a connecting to a test database and creating files before the tests, and deleting test database and files after the tests.
+
    ![](https://i.ibb.co/KDpcB6t/Screen-Shot-2022-05-02-at-6-52-08-PM.png )
 2. `TestExample()` is the meat of the testing logic, consisting of a `testTable` slice of custom test objects. Each test object specifies the test name, requires inputs, and desires outputs. A for loop is used to loop over the range of `testTable` slice, called a specific function to be testing (`functionToBeTest` in this case), and asserting that the input and output fields of each `testTable` object (`tt` in this case) are equal.
    ![](https://i.ibb.co/XJtD2Nf/Screen-Shot-2022-05-02-at-6-50-40-PM.png )
