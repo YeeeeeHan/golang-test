@@ -10,6 +10,7 @@ import (
 var GlobalBalanceTable *skv.KVStore
 var GlobalPasswordTable *skv.KVStore
 
+// InitTables inits the balance and password tables
 func InitTables() (*skv.KVStore, *skv.KVStore, error) {
 	balanceStore, err := skv.Open(constants.BalanceFile)
 	if err != nil {
@@ -24,20 +25,23 @@ func InitTables() (*skv.KVStore, *skv.KVStore, error) {
 	return balanceStore, passwordStore, nil
 }
 
-// CreateUser
+// CreateUser does 3 actions:
+// 1. Add username and password to passwordTable if username does not exist
+// 2. Add username and 0 balance to balanceTable if username does not exist
+// 3. Append username to usernameTable
 func CreateUser(username, password string) error {
 	// If username already exists in passwordTable, return error
 	var getPw string
 	err := GlobalPasswordTable.Get(username, &getPw)
 	if err != skv.ErrNotFound {
-		return custError.AccountExistsError
+		return custError.AccountAlreadyExistsError
 	}
 
 	// If username already exists in balanceTable, return error
 	var getB string
 	err = GlobalBalanceTable.Get(username, &getB)
 	if err != skv.ErrNotFound {
-		return custError.AccountExistsError
+		return custError.AccountAlreadyExistsError
 	}
 
 	// Add username to passwordTable

@@ -14,6 +14,7 @@ import (
 	"errors"
 )
 
+// Register creates a user in the DB and logs user in
 func Register(wallet *Wallet, args []string) error {
 	if len(args) != 2 {
 		return custError.InvalidNumArguments
@@ -21,8 +22,6 @@ func Register(wallet *Wallet, args []string) error {
 
 	username := args[0]
 	password := args[1]
-
-	fmt.Println(fmt.Sprintf("Username: %s, password: %s", username, password))
 
 	err := db.CreateUser(username, password)
 	if err != nil {
@@ -36,6 +35,7 @@ func Register(wallet *Wallet, args []string) error {
 	return nil
 }
 
+// Login Authenticates user using passwordTable
 func Login(wallet *Wallet, args []string) error {
 	if len(args) != 2 {
 		return custError.InvalidNumArguments
@@ -55,14 +55,14 @@ func Login(wallet *Wallet, args []string) error {
 		return custError.WrongCredentialsError
 	}
 
-	// Login usr
+	// Login user
 	wallet.Username = username
 
 	fmt.Println(fmt.Sprintf("Successfully logged into %s", username))
 	return nil
 }
 
-// Deposit gets the curr value, adds deposit, and updates DB
+// Deposit adds amount to user's wallet balance
 func Deposit(wallet *Wallet, args []string) error {
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
@@ -84,6 +84,7 @@ func Deposit(wallet *Wallet, args []string) error {
 	return nil
 }
 
+// Withdraw reduces amount from user's wallet balance
 func Withdraw(wallet *Wallet, args []string) error {
 	if len(args) != 1 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
@@ -105,13 +106,21 @@ func Withdraw(wallet *Wallet, args []string) error {
 	return nil
 }
 
+// Send reduces amount from source wallet balance and increases amount of destination wallet balance
 func Send(wallet *Wallet, args []string) error {
 	if len(args) != 2 {
 		return errors.New(constants.InvalidNumArgumentsMsg)
 	}
 
-	username := args[0]
+	destUser := args[0]
 	amountStr := args[1]
+
+	// If destUser does not exist
+	var bal int
+	err := db.GlobalBalanceTable.Get(destUser, &bal)
+	if err != nil {
+		return custError.AccountsDoesNotExistError
+	}
 
 	// Convert amount value to int
 	amount, err := strconv.Atoi(amountStr)
@@ -126,17 +135,17 @@ func Send(wallet *Wallet, args []string) error {
 	}
 
 	// topUp to destination account
-	err = topUp(username, amount)
+	err = topUp(destUser, amount)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(fmt.Sprintf("Successfully sent (%s): $%d", username, amount))
+	fmt.Println(fmt.Sprintf("Successfully sent (%s): $%d", destUser, amount))
 	return nil
 }
 
+// Balance retrieves the balance for the user in the current session
 func Balance(wallet *Wallet) error {
-
 	// Get balance from DB
 	var bal int
 	err := db.GlobalBalanceTable.Get(wallet.Username, &bal)
@@ -148,8 +157,8 @@ func Balance(wallet *Wallet) error {
 	return nil
 }
 
+// Logout set the current user in the session to an empty Wallet struct end the user session
 func Logout(wallet *Wallet) error {
-
 	// Logout
 	*wallet = Wallet{}
 
@@ -157,8 +166,9 @@ func Logout(wallet *Wallet) error {
 	return nil
 }
 
+// Accounts reads all the username from the UsernameFile and retrieves all their balances.
+// Can only be operated by admin user.
 func Accounts(wallet *Wallet) error {
-
 	if wallet.Username != "admin" {
 		return custError.PermissionError
 	}
